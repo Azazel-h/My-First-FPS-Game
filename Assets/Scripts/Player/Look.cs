@@ -10,6 +10,7 @@ namespace Yasuhiro.FPSGame
         public static bool cursorIsLocked = true;
         public Transform player;
         public Transform cams;
+        public Transform weapon;
         public float Sensivity;
         private float maxAngle = 90;
         private Quaternion camCentre;
@@ -33,6 +34,7 @@ namespace Yasuhiro.FPSGame
             if (Quaternion.Angle(camCentre, _delta) < maxAngle) {
                 cams.localRotation = _delta;
             }
+            weapon.localRotation = cams.localRotation;
         }
 
         void SetX() {
