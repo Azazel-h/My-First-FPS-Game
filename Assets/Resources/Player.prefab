@@ -217,6 +217,7 @@ MonoBehaviour:
     m_Bits: 256
   groundDetector: {fileID: 792772712331368384}
   weaponParent: {fileID: 792772711947720522}
+  maxHealth: 100
   moveSpeed: 200
   jumpForce: 250
   sprintModifier: 2

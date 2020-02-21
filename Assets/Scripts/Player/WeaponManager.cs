@@ -30,7 +30,7 @@ namespace Yasuhiro.FPSGame {
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                photonView.RPC("Eqip", RpcTarget.All, 0);
+                photonView.RPC("Equip", RpcTarget.All, 0);
             }
 
             if (currentWeapon != null) {
