@@ -60,14 +60,12 @@ namespace Yasuhiro.FPSGame
             if (cursorIsLocked) {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-
-                if (Input.GetKeyDown(KeyCode.Escape)) {
-                    cursorIsLocked = false;
-                }
+                    if (Input.GetKeyDown(KeyCode.Escape)) {
+                        cursorIsLocked = false;
+                    }
             } else {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-
                 if (Input.GetKeyDown(KeyCode.Escape)) {
                     cursorIsLocked = true;
                 }

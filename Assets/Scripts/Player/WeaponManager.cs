@@ -11,7 +11,9 @@ namespace Yasuhiro.FPSGame {
 
         public Gun[] loadout;
         public Transform weaponParent;
-        public GameObject currentWeapon; 
+        private GameObject currentWeapon; 
+        public GameObject bulletHolePrefab;
+        public LayerMask canBeShoot;
         private int currentIndex;
 
         #endregion
@@ -21,7 +23,12 @@ namespace Yasuhiro.FPSGame {
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
-            if (currentWeapon != null) Aim(Input.GetMouseButton(1));
+            if (currentWeapon != null) {
+                Aim(Input.GetMouseButton(1));
+                if (Input.GetMouseButton(0)) {
+                    Shoot();
+                }
+            }
         }
 
         #endregion
@@ -46,6 +53,16 @@ namespace Yasuhiro.FPSGame {
                 _anchor.position = Vector3.Lerp(_anchor.position, _stateADS.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
             } else {
                 _anchor.position = Vector3.Lerp(_anchor.position, _stateHip.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
+            }
+        }
+
+        void Shoot() {
+            Transform _spawn = transform.Find("Cameras/PlayerCamera");
+            RaycastHit _hit = new RaycastHit();
+            if (Physics.Raycast(_spawn.position, _spawn.forward, out _hit, 1000f, canBeShoot)) {
+                GameObject _newHole = Instantiate(bulletHolePrefab, _hit.point + _hit.normal * 0.001f, Quaternion.identity) as GameObject;
+                _newHole.transform.LookAt(_hit.point + _hit.normal);
+                Destroy(_newHole, 5f);
             }
         }
 
