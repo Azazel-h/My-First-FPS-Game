@@ -28,7 +28,7 @@ namespace Yasuhiro.FPSGame {
             if (!photonView.IsMine) {
                 return;
             }
-            
+
             if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
             if (currentWeapon != null) {
                 Aim(Input.GetMouseButton(1));
@@ -51,6 +51,7 @@ namespace Yasuhiro.FPSGame {
             GameObject _newEquipment = Instantiate(loadout[p_ind].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
             _newEquipment.transform.localPosition = Vector3.zero;
             _newEquipment.transform.localEulerAngles = Vector3.zero;
+            _newEquipment.GetComponent<Sway>().enabled = photonView.IsMine;
             currentWeapon = _newEquipment;
         }
 
