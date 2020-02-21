@@ -14,6 +14,8 @@ namespace Yasuhiro.FPSGame {
         private GameObject currentWeapon; 
         public GameObject bulletHolePrefab;
         public LayerMask canBeShoot;
+
+        private float currentCoolDown;
         private int currentIndex;
 
         #endregion
@@ -25,9 +27,12 @@ namespace Yasuhiro.FPSGame {
             if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
             if (currentWeapon != null) {
                 Aim(Input.GetMouseButton(1));
-                if (Input.GetMouseButton(0)) {
+                if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
                     Shoot();
                 }
+
+                currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+                if (currentCoolDown > 0) currentCoolDown -= Time.deltaTime;
             }
         }
 
@@ -58,12 +63,24 @@ namespace Yasuhiro.FPSGame {
 
         void Shoot() {
             Transform _spawn = transform.Find("Cameras/PlayerCamera");
+
+            Vector3 _bloom = _spawn.position + _spawn.forward * 100f;
+            _bloom += Random.Range(-loadout[currentIndex].bloom, loadout[currentIndex].bloom) * _spawn.up;
+            _bloom += Random.Range(-loadout[currentIndex].bloom, loadout[currentIndex].bloom) * _spawn.right;
+            _bloom -= _spawn.position;
+            _bloom.Normalize();
+
             RaycastHit _hit = new RaycastHit();
-            if (Physics.Raycast(_spawn.position, _spawn.forward, out _hit, 1000f, canBeShoot)) {
+
+            if (Physics.Raycast(_spawn.position, _bloom, out _hit, 1000f, canBeShoot)) {
                 GameObject _newHole = Instantiate(bulletHolePrefab, _hit.point + _hit.normal * 0.001f, Quaternion.identity) as GameObject;
                 _newHole.transform.LookAt(_hit.point + _hit.normal);
                 Destroy(_newHole, 5f);
             }
+
+            currentWeapon.transform.Rotate(-loadout[currentIndex].recoil, 0, 0);
+            currentWeapon.transform.position -= currentWeapon.transform.forward * loadout[currentIndex].kickback;
+            currentCoolDown = loadout[currentIndex].firerate;
         }
 
         #endregion

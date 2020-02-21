@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   gunName: Pistol
-  firerate: 9000
+  firerate: 0.15
+  bloom: 2
+  kickback: 0.1
+  recoil: 10
   aimSpeed: 10
   prefab: {fileID: 683238094069298792, guid: f02e3f611de148a479daa3fe758bfb75, type: 3}

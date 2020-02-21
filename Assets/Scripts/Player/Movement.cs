@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
 
 namespace Yasuhiro.FPSGame {
-    public class Movement : MonoBehaviour
+    public class Movement : MonoBehaviourPunCallbacks
     {
         #region Variables
 
@@ -38,6 +38,10 @@ namespace Yasuhiro.FPSGame {
 
         void FixedUpdate()
         {
+            if (!photonView.IsMine) {
+                return;
+            }
+
             float _hMove = Input.GetAxisRaw("Horizontal");
             float _vMove = Input.GetAxisRaw("Vertical");
             bool _sprint = Input.GetKey(KeyCode.LeftShift);
