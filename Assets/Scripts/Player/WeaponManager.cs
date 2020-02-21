@@ -88,7 +88,7 @@ namespace Yasuhiro.FPSGame {
 
                 if (photonView.IsMine) {
                     if (_hit.collider.gameObject.layer == 11) {
-                        photonView.RPC("TakeDamage", RpcTarget.All, loadout[currentIndex].damage);
+                        _hit.collider.gameObject.GetPhotonView().RPC("TakeDamage", RpcTarget.All, loadout[currentIndex].damage);
                     }
                 }
             }
@@ -96,6 +96,11 @@ namespace Yasuhiro.FPSGame {
             currentWeapon.transform.Rotate(-loadout[currentIndex].recoil, 0, 0);
             currentWeapon.transform.position -= currentWeapon.transform.forward * loadout[currentIndex].kickback;
             currentCoolDown = loadout[currentIndex].firerate;
+        }
+
+        [PunRPC]
+        private void TakeDamage(int p_damage) {
+            GetComponent<Movement>().TakeDamage(p_damage);
         }
 
         #endregion

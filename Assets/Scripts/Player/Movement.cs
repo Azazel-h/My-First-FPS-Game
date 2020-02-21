@@ -107,10 +107,15 @@ namespace Yasuhiro.FPSGame {
 
         #region Public Methods
 
-        [PunRPC]
         public void TakeDamage(int p_damage) {
-            currentHealth -= p_damage;
-            Debug.Log(currentHealth);
+            if (photonView.IsMine) {
+                currentHealth -= p_damage;
+                Debug.Log(currentHealth);
+
+                if (currentHealth <= 0) {
+                    Debug.Log("Died");
+                }
+            }
         }
 
         #endregion
