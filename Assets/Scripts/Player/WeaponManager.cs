@@ -36,7 +36,7 @@ namespace Yasuhiro.FPSGame {
             if (currentWeapon != null) {
                 Aim(Input.GetMouseButton(1));
                 if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
-                     photonView.RPC("Shoot", RpcTarget.All, 0);
+                     photonView.RPC("Shoot", RpcTarget.All);
                 }
 
                 currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
