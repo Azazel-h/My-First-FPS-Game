@@ -5,7 +5,8 @@ using UnityEngine;
 namespace Yasuhiro.FPSGame {
     public class Movement : MonoBehaviour
     {
-        // Start is called before the first frame update
+        #region Variables
+
         private Rigidbody player_rig; 
         public Camera playerCamera;
         public LayerMask ground;
@@ -15,6 +16,11 @@ namespace Yasuhiro.FPSGame {
         public float jumpForce;
         public float sprintModifier;
         public float sprintFOVModifier = 1.25f;
+
+        #endregion
+
+        #region Monobehavior Callbacks
+
         void Start()
         {
             baseFOV = playerCamera.fieldOfView;
@@ -52,5 +58,6 @@ namespace Yasuhiro.FPSGame {
                 playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, baseFOV, Time.fixedDeltaTime * 8f);
             }
         }
+        #endregion
     }
 }

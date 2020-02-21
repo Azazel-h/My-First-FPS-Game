@@ -7,6 +7,8 @@ namespace Yasuhiro.FPSGame
 {
     public class Look : MonoBehaviour
     {
+        #region Variables
+
         public static bool cursorIsLocked = true;
         public Transform player;
         public Transform cams;
@@ -14,6 +16,11 @@ namespace Yasuhiro.FPSGame
         public float Sensivity;
         private float maxAngle = 90;
         private Quaternion camCentre;
+
+        #endregion
+
+        #region Monobehavior Callbacks
+
         void Start()
         {
             camCentre = cams.localRotation;
@@ -25,6 +32,10 @@ namespace Yasuhiro.FPSGame
             SetX();
             UpdateCursorLock();
         }
+
+        #endregion
+        
+        #region Private Methods
 
         void SetY() {
             float _input = Input.GetAxis("Mouse Y") * Sensivity * Time.deltaTime;
@@ -62,6 +73,8 @@ namespace Yasuhiro.FPSGame
                 }
             }
         }
+        #endregion
     }
+
 }
 
