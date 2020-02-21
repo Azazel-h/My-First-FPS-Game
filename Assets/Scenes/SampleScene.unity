@@ -1651,6 +1651,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   groundDetector: {fileID: 2107146128}
+  weaponParent: {fileID: 1425964826}
   moveSpeed: 200
   jumpForce: 250
   sprintModifier: 2
