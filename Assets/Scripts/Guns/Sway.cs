@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace Yasuhiro.FPSGame
 {
-    public class Sway : MonoBehaviour
+    public class Sway : MonoBehaviourPunCallbacks
     {
         #region Variables
         
@@ -23,6 +24,9 @@ namespace Yasuhiro.FPSGame
 
         private void Update()
         {
+            if (!photonView.IsMine) {
+                return;
+            }
             UpdateSway();
         }
 

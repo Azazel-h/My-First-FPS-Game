@@ -10,6 +10,7 @@ namespace Yasuhiro.FPSGame {
 
         private Rigidbody player_rig; 
         public Camera playerCamera;
+        public GameObject cameraParent;
         public LayerMask ground;
         public Transform groundDetector;
         public Transform weaponParent;
@@ -28,15 +29,16 @@ namespace Yasuhiro.FPSGame {
 
         #region Monobehavior Callbacks
 
-        void Start()
+        private void Start()
         {
+            cameraParent.SetActive(photonView.IsMine);
             baseFOV = playerCamera.fieldOfView;
             Camera.main.enabled = false;
             player_rig = GetComponent<Rigidbody>();
             weaponParentOrigin = weaponParent.localPosition;
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (!photonView.IsMine) {
                 return;

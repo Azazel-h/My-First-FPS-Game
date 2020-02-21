@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 
 namespace Yasuhiro.FPSGame
 {
-    public class Look : MonoBehaviour
+    public class Look : MonoBehaviourPunCallbacks
     {
         #region Variables
 
@@ -27,7 +28,11 @@ namespace Yasuhiro.FPSGame
         }
 
         void Update()
-        {
+        {   
+            if (!photonView.IsMine) {
+                return;
+            }
+
             SetY();
             SetX();
             UpdateCursorLock();

@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 
 namespace Yasuhiro.FPSGame {
-    public class WeaponManager : MonoBehaviour
+    public class WeaponManager : MonoBehaviourPunCallbacks
     {
 
         #region Variables
@@ -24,6 +25,10 @@ namespace Yasuhiro.FPSGame {
 
         void Update()
         {
+            if (!photonView.IsMine) {
+                return;
+            }
+            
             if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
             if (currentWeapon != null) {
                 Aim(Input.GetMouseButton(1));
