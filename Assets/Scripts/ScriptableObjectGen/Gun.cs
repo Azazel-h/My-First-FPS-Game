@@ -7,6 +7,7 @@ namespace Yasuhiro.FPSGame {
     {
         public string gunName;
         public float firerate;
+        public int damage;
         public float bloom;
         public float kickback;
         public float recoil;

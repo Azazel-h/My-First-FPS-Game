@@ -17,6 +17,8 @@ namespace Yasuhiro.FPSGame {
         private Vector3 weaponParentOrigin;
         private Vector3 targetWeaponBobPosition;
 
+        public float maxHealth;
+        private float currentHealth;
         private float movementCounter;
         private float idleCounter;
         private float baseFOV;
@@ -32,6 +34,13 @@ namespace Yasuhiro.FPSGame {
         private void Start()
         {
             cameraParent.SetActive(photonView.IsMine);
+
+            currentHealth = maxHealth;
+
+            if (!photonView.IsMine) {
+                gameObject.layer = 11;
+            }
+
             baseFOV = playerCamera.fieldOfView;
             if (Camera.main) Camera.main.enabled = false;
             player_rig = GetComponent<Rigidbody>();
@@ -93,6 +102,16 @@ namespace Yasuhiro.FPSGame {
             void HeadBob(float p_z, float p_xIntensity, float p_yIntensity) {
                 targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(p_z) * p_xIntensity, Mathf.Sin(p_z * 2) * p_yIntensity, 0);
             }
+
+        #endregion
+
+        #region Public Methods
+
+        [PunRPC]
+        public void TakeDamage(int p_damage) {
+            currentHealth -= p_damage;
+            Debug.Log(currentHealth);
+        }
 
         #endregion
     }

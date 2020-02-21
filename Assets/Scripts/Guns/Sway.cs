@@ -11,6 +11,7 @@ namespace Yasuhiro.FPSGame
         
         public float intensity;
         public float smooth;
+        public bool isMine;
         private Quaternion originRotation;
 
         #endregion
@@ -34,6 +35,12 @@ namespace Yasuhiro.FPSGame
         private void UpdateSway() {
             float _xMouse = Input.GetAxis("Mouse X");
             float _yMouse = Input.GetAxis("Mouse Y");
+
+            if (!isMine) {
+                _xMouse = 0;
+                _yMouse = 0;
+            }
+
             Quaternion _xAdj = Quaternion.AngleAxis(-intensity * _xMouse, Vector3.up);
             Quaternion _yAdj = Quaternion.AngleAxis(intensity * _yMouse, Vector3.right);
             Quaternion _targetRotation = originRotation * _xAdj * _yAdj;

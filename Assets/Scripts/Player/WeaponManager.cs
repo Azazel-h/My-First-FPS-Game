@@ -29,11 +29,14 @@ namespace Yasuhiro.FPSGame {
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
+            if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                photonView.RPC("Eqip", RpcTarget.All, 0);
+            }
+
             if (currentWeapon != null) {
                 Aim(Input.GetMouseButton(1));
                 if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
-                    Shoot();
+                     photonView.RPC("Shoot", RpcTarget.All, 0);
                 }
 
                 currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
@@ -44,14 +47,14 @@ namespace Yasuhiro.FPSGame {
         #endregion
 
         #region Private Methods
-
+        [PunRPC]
         void Equip(int p_ind) {
             if (currentWeapon != null) Destroy(currentWeapon);
             currentIndex = p_ind;
             GameObject _newEquipment = Instantiate(loadout[p_ind].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
             _newEquipment.transform.localPosition = Vector3.zero;
             _newEquipment.transform.localEulerAngles = Vector3.zero;
-            _newEquipment.GetComponent<Sway>().enabled = photonView.IsMine;
+            _newEquipment.GetComponent<Sway>().isMine = photonView.IsMine;
             currentWeapon = _newEquipment;
         }
 
@@ -66,7 +69,7 @@ namespace Yasuhiro.FPSGame {
                 _anchor.position = Vector3.Lerp(_anchor.position, _stateHip.position, Time.deltaTime * loadout[currentIndex].aimSpeed);
             }
         }
-
+        [PunRPC]
         void Shoot() {
             Transform _spawn = transform.Find("Cameras/PlayerCamera");
 
@@ -82,6 +85,12 @@ namespace Yasuhiro.FPSGame {
                 GameObject _newHole = Instantiate(bulletHolePrefab, _hit.point + _hit.normal * 0.001f, Quaternion.identity) as GameObject;
                 _newHole.transform.LookAt(_hit.point + _hit.normal);
                 Destroy(_newHole, 5f);
+
+                if (photonView.IsMine) {
+                    if (_hit.collider.gameObject.layer == 11) {
+                        photonView.RPC("TakeDamage", RpcTarget.All, loadout[currentIndex].damage);
+                    }
+                }
             }
 
             currentWeapon.transform.Rotate(-loadout[currentIndex].recoil, 0, 0);
