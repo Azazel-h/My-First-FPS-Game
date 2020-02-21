@@ -219,7 +219,7 @@ MonoBehaviour:
   weaponParent: {fileID: 792772711947720522}
   maxHealth: 100
   moveSpeed: 200
-  jumpForce: 250
+  jumpForce: 400
   sprintModifier: 2
   sprintFOVModifier: 1.5
 --- !u!114 &792772711018772689

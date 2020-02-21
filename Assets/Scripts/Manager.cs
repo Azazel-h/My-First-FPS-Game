@@ -7,14 +7,15 @@ namespace Yasuhiro.FPSGame {
     public class Manager : MonoBehaviour
     {
         public string playerPrefab;
-        public Transform spawnPoint;
+        public Transform[] spawnPoints;
 
         private void Start() {
             Spawn();
         }
 
-        private void Spawn() {
-            PhotonNetwork.Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+        public void Spawn() {
+            Transform _spawn = spawnPoints[Random.Range(0, spawnPoints.Length - 1)];
+            PhotonNetwork.Instantiate(playerPrefab, _spawn.position, _spawn.rotation);
         }
     }
 }

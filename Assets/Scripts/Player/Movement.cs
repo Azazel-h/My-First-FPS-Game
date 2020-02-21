@@ -11,6 +11,7 @@ namespace Yasuhiro.FPSGame {
         private Rigidbody player_rig; 
         public Camera playerCamera;
         public GameObject cameraParent;
+        private Manager manager;
         public LayerMask ground;
         public Transform groundDetector;
         public Transform weaponParent;
@@ -34,6 +35,7 @@ namespace Yasuhiro.FPSGame {
         private void Start()
         {
             cameraParent.SetActive(photonView.IsMine);
+            manager = GameObject.Find("Manager").GetComponent<Manager>();
 
             currentHealth = maxHealth;
 
@@ -66,6 +68,9 @@ namespace Yasuhiro.FPSGame {
                 player_rig.AddForce(Vector3.up * jumpForce);
             }
 
+            if (Input.GetKeyDown(KeyCode.U)) {
+                TakeDamage(500);
+            }
             Vector3 _direction = new Vector3(_hMove, 0, _vMove);
             _direction.Normalize();
 
@@ -113,7 +118,8 @@ namespace Yasuhiro.FPSGame {
                 Debug.Log(currentHealth);
 
                 if (currentHealth <= 0) {
-                    Debug.Log("Died");
+                    manager.Spawn();
+                    PhotonNetwork.Destroy(gameObject);
                 }
             }
         }
