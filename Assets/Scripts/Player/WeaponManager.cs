@@ -25,22 +25,20 @@ namespace Yasuhiro.FPSGame {
 
         void Update()
         {
-            if (!photonView.IsMine) {
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            if (photonView.IsMine && Input.GetKeyDown(KeyCode.Alpha1)) {
                 photonView.RPC("Equip", RpcTarget.All, 0);
             }
 
             if (currentWeapon != null) {
-                Aim(Input.GetMouseButton(1));
-                if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
-                     photonView.RPC("Shoot", RpcTarget.All);
-                }
+                if (photonView.IsMine) {
+                    Aim(Input.GetMouseButton(1));
+                    if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
+                        photonView.RPC("Shoot", RpcTarget.All);
+                    }
 
-                currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
-                if (currentCoolDown > 0) currentCoolDown -= Time.deltaTime;
+                    currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
+                    if (currentCoolDown > 0) currentCoolDown -= Time.deltaTime;
+                }
             }
         }
 
@@ -100,7 +98,7 @@ namespace Yasuhiro.FPSGame {
 
         [PunRPC]
         private void TakeDamage(int p_damage) {
-            GetComponent<Movement>().TakeDamage(p_damage);
+            GetComponent<Player>().TakeDamage(p_damage);
         }
 
         #endregion

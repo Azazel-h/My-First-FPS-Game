@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 
 namespace Yasuhiro.FPSGame {
-    public class Movement : MonoBehaviourPunCallbacks
+    public class Player : MonoBehaviourPunCallbacks
     {
         #region Variables
 
@@ -17,6 +17,7 @@ namespace Yasuhiro.FPSGame {
         public Transform weaponParent;
         private Vector3 weaponParentOrigin;
         private Vector3 targetWeaponBobPosition;
+        private Transform ui_healthBar;
 
         public float maxHealth;
         private float currentHealth;
@@ -47,6 +48,12 @@ namespace Yasuhiro.FPSGame {
             if (Camera.main) Camera.main.enabled = false;
             player_rig = GetComponent<Rigidbody>();
             weaponParentOrigin = weaponParent.localPosition;
+
+            if (photonView.IsMine) {
+                ui_healthBar = GameObject.Find("HUD/Health/Bar").transform;
+                UpdateHealthBar();
+            }
+
         }
 
         private void FixedUpdate()
@@ -69,7 +76,7 @@ namespace Yasuhiro.FPSGame {
             }
 
             if (Input.GetKeyDown(KeyCode.U)) {
-                TakeDamage(500);
+                TakeDamage(10);
             }
             Vector3 _direction = new Vector3(_hMove, 0, _vMove);
             _direction.Normalize();
@@ -99,13 +106,19 @@ namespace Yasuhiro.FPSGame {
                 movementCounter += Time.deltaTime * 3f;
                 weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
             }
+            UpdateHealthBar();
         }
         #endregion
     
         #region  Private Methods
 
-            void HeadBob(float p_z, float p_xIntensity, float p_yIntensity) {
+            private void HeadBob(float p_z, float p_xIntensity, float p_yIntensity) {
                 targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(p_z) * p_xIntensity, Mathf.Sin(p_z * 2) * p_yIntensity, 0);
+            }
+
+            private void UpdateHealthBar() {
+                float _healthRatio = (float)currentHealth / (float)maxHealth;
+                ui_healthBar.localScale = Vector3.Lerp(ui_healthBar.localScale , new Vector3 (_healthRatio, 1, 1), Time.deltaTime * 9f);
             }
 
         #endregion
@@ -116,6 +129,7 @@ namespace Yasuhiro.FPSGame {
             if (photonView.IsMine) {
                 currentHealth -= p_damage;
                 Debug.Log(currentHealth);
+                UpdateHealthBar();
 
                 if (currentHealth <= 0) {
                     manager.Spawn();
