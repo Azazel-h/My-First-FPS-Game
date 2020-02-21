@@ -33,7 +33,7 @@ namespace Yasuhiro.FPSGame {
         {
             cameraParent.SetActive(photonView.IsMine);
             baseFOV = playerCamera.fieldOfView;
-            Camera.main.enabled = false;
+            if (Camera.main) Camera.main.enabled = false;
             player_rig = GetComponent<Rigidbody>();
             weaponParentOrigin = weaponParent.localPosition;
         }

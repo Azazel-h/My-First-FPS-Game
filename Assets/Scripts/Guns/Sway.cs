@@ -5,7 +5,7 @@ using Photon.Pun;
 
 namespace Yasuhiro.FPSGame
 {
-    public class Sway : MonoBehaviourPunCallbacks
+    public class Sway : MonoBehaviour
     {
         #region Variables
         
@@ -24,9 +24,6 @@ namespace Yasuhiro.FPSGame
 
         private void Update()
         {
-            if (!photonView.IsMine) {
-                return;
-            }
             UpdateSway();
         }
 
