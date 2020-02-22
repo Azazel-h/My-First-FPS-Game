@@ -18,10 +18,19 @@ namespace Yasuhiro.FPSGame {
 
         private float currentCoolDown;
         private int currentIndex;
+        private bool isReloading;
 
         #endregion
 
         #region Monobehavior Callbacks
+
+
+        private void Start() {
+                foreach(Gun a in loadout) {
+                    a.Initialize();
+                }
+                Equip(0);
+        }
 
         void Update()
         {
@@ -33,7 +42,12 @@ namespace Yasuhiro.FPSGame {
                 if (photonView.IsMine) {
                     Aim(Input.GetMouseButton(1));
                     if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
-                        photonView.RPC("Shoot", RpcTarget.All);
+                        if(loadout[currentIndex].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                        else StartCoroutine(Reload(loadout[currentIndex].reloadTime));
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.R)) {
+                        StartCoroutine(Reload(loadout[currentIndex].reloadTime));
                     }
 
                     currentWeapon.transform.localPosition = Vector3.Lerp(currentWeapon.transform.localPosition, Vector3.zero, Time.deltaTime * 4f);
@@ -45,9 +59,25 @@ namespace Yasuhiro.FPSGame {
         #endregion
 
         #region Private Methods
+
+        IEnumerator Reload(float p_wait) {
+            isReloading = true;
+            currentWeapon.SetActive(false);
+
+            yield return new WaitForSeconds(p_wait);
+            loadout[currentIndex].ReLoad();
+
+            isReloading = false;
+            currentWeapon.SetActive(true);
+        }
+
+
         [PunRPC]
         void Equip(int p_ind) {
-            if (currentWeapon != null) Destroy(currentWeapon);
+            if (currentWeapon != null) {
+                if (isReloading) StopCoroutine("Reload");
+                Destroy(currentWeapon);
+            }
             currentIndex = p_ind;
             GameObject _newEquipment = Instantiate(loadout[p_ind].prefab, weaponParent.position, weaponParent.rotation, weaponParent) as GameObject;
             _newEquipment.transform.localPosition = Vector3.zero;

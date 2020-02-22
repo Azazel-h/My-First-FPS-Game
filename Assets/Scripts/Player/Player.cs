@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
+
 using Photon.Pun;
 
 namespace Yasuhiro.FPSGame {
@@ -12,12 +14,14 @@ namespace Yasuhiro.FPSGame {
         public Camera playerCamera;
         public GameObject cameraParent;
         private Manager manager;
+        private WeaponManager weapon;
         public LayerMask ground;
         public Transform groundDetector;
         public Transform weaponParent;
         private Vector3 weaponParentOrigin;
         private Vector3 targetWeaponBobPosition;
         private Transform ui_healthBar;
+        private Text ui_ammo;
 
         public float maxHealth;
         private float currentHealth;
@@ -51,6 +55,7 @@ namespace Yasuhiro.FPSGame {
 
             if (photonView.IsMine) {
                 ui_healthBar = GameObject.Find("HUD/Health/Bar").transform;
+                ui_ammo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
                 UpdateHealthBar();
             }
 

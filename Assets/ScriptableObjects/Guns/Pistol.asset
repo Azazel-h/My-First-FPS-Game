@@ -15,6 +15,9 @@ MonoBehaviour:
   gunName: Pistol
   firerate: 0.15
   damage: 10
+  ammo: 20
+  clipsize: 8
+  reloadTime: 1.5
   bloom: 2
   kickback: 0.1
   recoil: 10
