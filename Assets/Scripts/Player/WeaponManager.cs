@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using Photon.Pun;
 
@@ -129,6 +130,14 @@ namespace Yasuhiro.FPSGame {
         [PunRPC]
         private void TakeDamage(int p_damage) {
             GetComponent<Player>().TakeDamage(p_damage);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void UpdateAmmoBar(Text p_uiAmmoBar) {
+            p_uiAmmoBar.text = loadout[currentIndex].GetClip().ToString("D2") + "/ " + loadout[currentIndex].GetStash().ToString("D2");
         }
 
         #endregion

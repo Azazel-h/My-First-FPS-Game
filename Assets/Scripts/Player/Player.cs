@@ -41,6 +41,7 @@ namespace Yasuhiro.FPSGame {
         {
             cameraParent.SetActive(photonView.IsMine);
             manager = GameObject.Find("Manager").GetComponent<Manager>();
+            weapon = GetComponent<WeaponManager>();
 
             currentHealth = maxHealth;
 
@@ -57,6 +58,7 @@ namespace Yasuhiro.FPSGame {
                 ui_healthBar = GameObject.Find("HUD/Health/Bar").transform;
                 ui_ammo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
                 UpdateHealthBar();
+                weapon.UpdateAmmoBar(ui_ammo);
             }
 
         }
@@ -112,6 +114,7 @@ namespace Yasuhiro.FPSGame {
                 weaponParent.localPosition = Vector3.Lerp(weaponParent.localPosition, targetWeaponBobPosition, Time.deltaTime * 6f);
             }
             UpdateHealthBar();
+            weapon.UpdateAmmoBar(ui_ammo);
         }
         #endregion
     
