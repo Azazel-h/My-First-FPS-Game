@@ -43,11 +43,13 @@ namespace Yasuhiro.FPSGame {
                 if (photonView.IsMine) {
                     Aim(Input.GetMouseButton(1));
                     if (Input.GetMouseButtonDown(0) && currentCoolDown <= 0) {
-                        if(loadout[currentIndex].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
-                        else StartCoroutine(Reload(loadout[currentIndex].reloadTime));
+                        if (!isReloading) {
+                            if (loadout[currentIndex].FireBullet()) photonView.RPC("Shoot", RpcTarget.All);
+                            else if (loadout[currentIndex].GetStash() > 0) StartCoroutine(Reload(loadout[currentIndex].reloadTime));
+                        }
                     }
 
-                    if (Input.GetKeyDown(KeyCode.R)) {
+                    if (Input.GetKeyDown(KeyCode.R) && loadout[currentIndex].GetStash() > 0) {
                         StartCoroutine(Reload(loadout[currentIndex].reloadTime));
                     }
 
@@ -137,7 +139,7 @@ namespace Yasuhiro.FPSGame {
         #region Public Methods
 
         public void UpdateAmmoBar(Text p_uiAmmoBar) {
-            p_uiAmmoBar.text = loadout[currentIndex].GetClip().ToString("D2") + "/ " + loadout[currentIndex].GetStash().ToString("D2");
+            p_uiAmmoBar.text = loadout[currentIndex].GetClip().ToString("00") + "/ " + loadout[currentIndex].GetStash().ToString("00");
         }
 
         #endregion
