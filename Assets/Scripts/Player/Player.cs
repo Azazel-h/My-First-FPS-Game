@@ -22,6 +22,9 @@ namespace Yasuhiro.FPSGame {
         private Vector3 targetWeaponBobPosition;
         private Transform ui_healthBar;
         private Text ui_ammo;
+        private Vector3 slideDirection;
+        private Vector3 originCamPos;
+        private Vector3 weaponParentCurrentPosition;
 
         public float maxHealth;
         private float currentHealth;
@@ -32,6 +35,10 @@ namespace Yasuhiro.FPSGame {
         public float jumpForce;
         public float sprintModifier;
         public float sprintFOVModifier = 1.25f;
+        public float slideModifier;
+        public float slideTime;
+        private bool sliding;
+        private float _slideTime;
 
         #endregion
 
@@ -50,10 +57,11 @@ namespace Yasuhiro.FPSGame {
             }
 
             baseFOV = playerCamera.fieldOfView;
+            originCamPos = playerCamera.transform.localPosition;
             if (Camera.main) Camera.main.enabled = false;
             player_rig = GetComponent<Rigidbody>();
             weaponParentOrigin = weaponParent.localPosition;
-
+            weaponParentCurrentPosition = weaponParentOrigin;
             if (photonView.IsMine) {
                 ui_healthBar = GameObject.Find("HUD/Health/Bar").transform;
                 ui_ammo = GameObject.Find("HUD/Ammo/Text").GetComponent<Text>();
@@ -73,10 +81,12 @@ namespace Yasuhiro.FPSGame {
             float _vMove = Input.GetAxisRaw("Vertical");
             bool _sprint = Input.GetKey(KeyCode.LeftShift);
             bool _jump = Input.GetKey(KeyCode.Space);
+            bool _slide = Input.GetKey(KeyCode.LeftControl);
 
             bool isGrounded = Physics.Raycast(groundDetector.position, Vector3.down, 0.1f, ground);
             bool isJumping = _jump && isGrounded;
             bool isSprinting = _sprint && _vMove > 0 && isGrounded;
+            bool isSliding = isSprinting && _slide && !sliding;
 
             if (isJumping) {
                 player_rig.AddForce(Vector3.up * jumpForce);
@@ -85,19 +95,47 @@ namespace Yasuhiro.FPSGame {
             if (Input.GetKeyDown(KeyCode.U)) {
                 TakeDamage(10);
             }
-            Vector3 _direction = new Vector3(_hMove, 0, _vMove);
-            _direction.Normalize();
 
+            Vector3 _direction = Vector3.zero;
             float _adjSpeed = moveSpeed;
-            if (isSprinting) _adjSpeed *= sprintModifier;
-            Vector3 _targetVolocity = transform.TransformDirection(_direction) * _adjSpeed * Time.fixedDeltaTime;
+
+            if (!sliding) {
+                _direction = new Vector3(_hMove, 0, _vMove);
+                _direction.Normalize();
+                _direction = transform.TransformDirection(_direction);
+                if (isSprinting) _adjSpeed *= sprintModifier;
+
+            } else {
+               _direction = slideDirection;
+               _adjSpeed *= slideModifier;
+               _slideTime -= Time.fixedDeltaTime;
+               if (_slideTime <= 0) {
+                   sliding = false;
+                   weaponParentCurrentPosition = weaponParentOrigin;
+               }
+            }
+
+            Vector3 _targetVolocity = _direction * _adjSpeed * Time.fixedDeltaTime;
             _targetVolocity.y = player_rig.velocity.y;
             player_rig.velocity = _targetVolocity;
 
-            if (isSprinting) {
-                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, baseFOV * sprintFOVModifier, Time.fixedDeltaTime * 8f);
+            if (isSliding) {
+                sliding = true;
+                slideDirection = _direction;
+                _slideTime = slideTime;
+                weaponParentCurrentPosition += Vector3.down * Time.fixedDeltaTime;
+            }
+
+            if (sliding) {
+                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, baseFOV * (sprintFOVModifier + 0.3f), Time.fixedDeltaTime * 8f);
+                playerCamera.transform.localPosition = Vector3.Lerp(playerCamera.transform.localPosition, originCamPos + Vector3.down * 0.2f, Time.fixedDeltaTime * 6f);
             } else {
-                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, baseFOV, Time.fixedDeltaTime * 8f);
+                    if (isSprinting) {
+                        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, baseFOV * sprintFOVModifier, Time.fixedDeltaTime * 8f);
+                    } else {
+                        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, baseFOV, Time.fixedDeltaTime * 8f);
+                    }
+                    playerCamera.transform.localPosition = Vector3.Lerp(playerCamera.transform.localPosition, originCamPos, Time.fixedDeltaTime * 6f);
             }
 
             if (_hMove == 0 && _vMove == 0) {
@@ -121,7 +159,7 @@ namespace Yasuhiro.FPSGame {
         #region  Private Methods
 
             private void HeadBob(float p_z, float p_xIntensity, float p_yIntensity) {
-                targetWeaponBobPosition = weaponParentOrigin + new Vector3(Mathf.Cos(p_z) * p_xIntensity, Mathf.Sin(p_z * 2) * p_yIntensity, 0);
+                targetWeaponBobPosition = weaponParentCurrentPosition + new Vector3(Mathf.Cos(p_z) * p_xIntensity, Mathf.Sin(p_z * 2) * p_yIntensity, 0);
             }
 
             private void UpdateHealthBar() {

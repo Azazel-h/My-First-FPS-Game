@@ -222,6 +222,8 @@ MonoBehaviour:
   jumpForce: 400
   sprintModifier: 2
   sprintFOVModifier: 1.5
+  slideModifier: 2
+  slideTime: 2
 --- !u!114 &792772711018772689
 MonoBehaviour:
   m_ObjectHideFlags: 0

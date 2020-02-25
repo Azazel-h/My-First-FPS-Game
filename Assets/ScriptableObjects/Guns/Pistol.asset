@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   gunName: Pistol
-  firerate: 0.15
+  firerate: 0.22
   damage: 10
   ammo: 20
   clipsize: 8
