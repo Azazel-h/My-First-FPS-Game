@@ -1,1 +1,2 @@
-Assets/Photon/** linguist-vendored
+Assets/** linguist-vendored
+Assets/Scripts/** linguist-vendored=false
